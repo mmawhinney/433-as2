@@ -1,0 +1,177 @@
+matheson@ubuntu:~/cmpt433/public/myApps$ gdb-multiarch -q noworky 
+Reading symbols from noworky...done.
+(gdb) target remote 192.168.7.2
+192.168.7.2: No such file or directory.
+(gdb) target remote 192.168.7.2:2001
+Remote debugging using 192.168.7.2:2001
+Reading /lib/ld-linux-armhf.so.3 from remote target...
+warning: File transfers from remote targets can be slow. Use "set sysroot" to access files locally instead.
+Reading /lib/ld-linux-armhf.so.3 from remote target...
+Reading symbols from target:/lib/ld-linux-armhf.so.3...Reading /lib/ld-2.19.so from remote target...
+Reading /lib/.debug/ld-2.19.so from remote target...
+(no debugging symbols found)...done.
+0xb6fd7bc0 in ?? () from target:/lib/ld-linux-armhf.so.3
+(gdb) list
+37	{
+38		unsigned int i;
+39	    for (i=0; i < size; i++) {
+40			printf("%3d: %05.1f --> %05.1f\n", i, source[i], target[i]);
+41		}
+42	}
+43	
+44	/*
+45	 * Create two arrays; populate them; swap them; display them.
+46	 */
+(gdb) frame
+#0  0xb6fd7bc0 in ?? () from target:/lib/ld-linux-armhf.so.3
+(gdb) b 27
+Breakpoint 1 at 0x104c8: file noworky.c, line 27.
+(gdb) c
+Continuing.
+Reading /lib/arm-linux-gnueabihf/libc.so.6 from remote target...
+Reading /lib/arm-linux-gnueabihf/libc-2.19.so from remote target...
+Reading /lib/arm-linux-gnueabihf/.debug/libc-2.19.so from remote target...
+
+Breakpoint 1, tradeArrays (array1=0x22008, array2=0x22060, size=10) at noworky.c:28
+28		for (i = size-1; i >= 0; i--) {
+(gdb) p i
+$1 = 0
+(gdb) n
+29			swapContent(array1+i, array2+i);
+(gdb) p i
+$2 = 9
+(gdb) b 29
+Breakpoint 2 at 0x104ce: file noworky.c, line 29.
+(gdb) c
+Continuing.
+
+Breakpoint 2, tradeArrays (array1=0x22008, array2=0x22060, size=10) at noworky.c:29
+29			swapContent(array1+i, array2+i);
+(gdb) p i
+$3 = 8
+(gdb) c
+Continuing.
+
+Breakpoint 2, tradeArrays (array1=0x22008, array2=0x22060, size=10) at noworky.c:29
+29			swapContent(array1+i, array2+i);
+(gdb) c
+Continuing.
+
+Breakpoint 2, tradeArrays (array1=0x22008, array2=0x22060, size=10) at noworky.c:29
+29			swapContent(array1+i, array2+i);
+(gdb) c
+Continuing.
+
+Breakpoint 2, tradeArrays (array1=0x22008, array2=0x22060, size=10) at noworky.c:29
+29			swapContent(array1+i, array2+i);
+(gdb) p i
+$4 = 5
+(gdb) c
+Continuing.
+
+Breakpoint 2, tradeArrays (array1=0x22008, array2=0x22060, size=10) at noworky.c:29
+29			swapContent(array1+i, array2+i);
+(gdb) c
+Continuing.
+
+Breakpoint 2, tradeArrays (array1=0x22008, array2=0x22060, size=10) at noworky.c:29
+29			swapContent(array1+i, array2+i);
+(gdb) c
+Continuing.
+
+Breakpoint 2, tradeArrays (array1=0x22008, array2=0x22060, size=10) at noworky.c:29
+29			swapContent(array1+i, array2+i);
+(gdb) p i
+$5 = 2
+(gdb) c
+Continuing.
+
+Breakpoint 2, tradeArrays (array1=0x22008, array2=0x22060, size=10) at noworky.c:29
+29			swapContent(array1+i, array2+i);
+(gdb) p i
+$6 = 1
+(gdb) c
+Continuing.
+
+Breakpoint 2, tradeArrays (array1=0x22008, array2=0x22060, size=10) at noworky.c:29
+29			swapContent(array1+i, array2+i);
+(gdb) p i
+$7 = 0
+(gdb) n
+28		for (i = size-1; i >= 0; i--) {
+(gdb) n
+30		}
+(gdb) n
+
+Breakpoint 2, tradeArrays (array1=0x22008, array2=0x22060, size=10) at noworky.c:29
+29			swapContent(array1+i, array2+i);
+(gdb) p i
+$8 = 4294967295
+(gdb) list
+24	 */
+25	void tradeArrays(double *array1, double *array2, int size)
+26	{
+27		unsigned int i;
+28		for (i = size-1; i >= 0; i--) {
+29			swapContent(array1+i, array2+i);
+30		}
+31	}
+32	
+33	/*
+(gdb) c
+Continuing.
+
+Breakpoint 2, tradeArrays (array1=0x22008, array2=0x22060, size=10) at noworky.c:29
+29			swapContent(array1+i, array2+i);
+(gdb) c
+Continuing.
+
+Breakpoint 2, tradeArrays (array1=0x22008, array2=0x22060, size=10) at noworky.c:29
+29			swapContent(array1+i, array2+i);
+(gdb) p i
+$9 = 4294967293
+(gdb) c
+Continuing.
+
+Breakpoint 2, tradeArrays (array1=0x22008, array2=0x22060, size=10) at noworky.c:29
+29			swapContent(array1+i, array2+i);
+(gdb) c
+Continuing.
+
+Breakpoint 2, tradeArrays (array1=0x22008, array2=0x22060, size=10) at noworky.c:29
+29			swapContent(array1+i, array2+i);
+(gdb) c
+Continuing.
+
+Breakpoint 2, tradeArrays (array1=0x22008, array2=0x22060, size=10) at noworky.c:29
+29			swapContent(array1+i, array2+i);
+(gdb) c
+Continuing.
+
+Breakpoint 2, tradeArrays (array1=0x22008, array2=0x22060, size=10) at noworky.c:29
+29			swapContent(array1+i, array2+i);
+(gdb) c
+Continuing.
+
+Breakpoint 2, tradeArrays (array1=0x22008, array2=0x22060, size=10) at noworky.c:29
+29			swapContent(array1+i, array2+i);
+(gdb) c
+Continuing.
+
+Breakpoint 2, tradeArrays (array1=0x22008, array2=0x22060, size=10) at noworky.c:29
+29			swapContent(array1+i, array2+i);
+(gdb) p i
+$10 = 4294967287
+(gdb) clear 29
+Deleted breakpoint 2 
+(gdb) c
+Continuing.
+
+Program received signal SIGSEGV, Segmentation fault.
+0x000104ae in swapContent (d1=0x20ff8, d2=0x21050) at noworky.c:19
+19		*d1 = tmp;
+(gdb) bt
+#0  0x000104ae in swapContent (d1=0x20ff8, d2=0x21050) at noworky.c:19
+#1  0x000104e4 in tradeArrays (array1=0x22008, array2=0x22060, size=10) at noworky.c:29
+#2  0x000105ec in main () at noworky.c:72
+(gdb)
