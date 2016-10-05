@@ -39,19 +39,7 @@ void findPrimes(unsigned long long counter) {
 	writeToPipe(counter);
 }
 
-// void* workFunction(void *args) {
-//     ThreadArgs *arguments = (ThreadArgs*) args;
-//     unsigned long long counter = arguments->counter;
-//     int fileDesc = arguments->fileDesc;
-//     while(counter < 5000005000) {
-//         findPrimes(counter, fileDesc);
-//         counter++;
-//     }
-//     return NULL;
-// }
-
 void* PrimeFinder_launchThread(void* args) {
-	
 	primes = malloc(sizeof(*primes));
 
 	ThreadArgs *arguments = (ThreadArgs*) args;
@@ -66,6 +54,7 @@ void* PrimeFinder_launchThread(void* args) {
 	}
 
 	close(fileDesc);
+	fclose(writeStream);
 	free(primes);
     return NULL;
 }
