@@ -8,6 +8,7 @@
 
 unsigned int primeCounter = 0;
 unsigned long long *primes;
+_Bool isCalculating;
 FILE *writeStream;
 
 void addToArray(unsigned long long prime) {
@@ -64,15 +65,18 @@ unsigned int PrimeFinder_getNumPrimesFound() {
 }
 
 unsigned long long PrimeFinder_getPrimeByIndex(int index) {
-	return 0;
+	if(index < primeCounter) {
+		return primes[index];
+	}
+	return -1;
 }
 
 _Bool PrimeFinder_isCalculating() {
-	return false;
+	return isCalculating;
 }
 
 void PrimeFinder_stopCalculating() {
-
+	isCalculating = false;
 }
 
 void PrimeFinder_setDelayBetweenPrimes(int delayInMs) {

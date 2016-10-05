@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include "primeFinder.h"
+#include "udpListener.h"
 
 #define START_COUNTER 5000000000
 
@@ -24,12 +25,14 @@ int main() {
 	pipe(fds);
 
     ThreadArgs arguments = { fds[1], START_COUNTER };
-	pthread_t tid;
-	pthread_create(&tid, NULL, &PrimeFinder_launchThread, (void*) &arguments);
+	pthread_t tid1, tid2;
+	pthread_create(&tid1, NULL, &PrimeFinder_launchThread, (void*) &arguments);
+	pthread_create(&tid2, NULL, &udpListener_launchThread, NULL);
 
 	readFromPipe(fds[0]);
     
-    pthread_join(tid, NULL);
+    pthread_join(tid1, NULL);
+    pthread_join(tid2, NULL);
 
 	return 0;
 }
