@@ -5,9 +5,14 @@
 #ifndef _PRIME_FINDER_H_
 #define _PRIME_FINDER_H_
 
+typedef struct ThreadArgs {
+	int fileDesc;
+	unsigned long long counter;
+} ThreadArgs;
+
 // Begin computing primes on a separate thread. Given the pipe
 // handle into which it should push any primes found.
-void PrimeFinder_launchThread(/*int pipeFileDesc*/);
+void* PrimeFinder_launchThread(void *args);
 
 // Return how many primes have been found
 unsigned int PrimeFinder_getNumPrimesFound(void);
