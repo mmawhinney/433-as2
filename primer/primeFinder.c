@@ -44,7 +44,6 @@ void findPrimes(unsigned long long counter, int fileDesc) {
 	primeCounter++;
 	addToArray(counter);
 	writeToPipe(fileDesc, counter);
-	// printf("Prime found: %llu\n", counter);
 }
 
 void* workFunction(void *args) {
@@ -63,7 +62,7 @@ void PrimeFinder_launchThread(int pipeFileDesc) {
 	primes = malloc(sizeof(*primes));
 	ThreadArgs args = {pipeFileDesc, 5000000000};
 	writeStream = fdopen(pipeFileDesc, "w");
-	printf("fds: %d\n", pipeFileDesc);
+
 
 	pthread_create(&tid, NULL, &workFunction, (void*) &args);
 
