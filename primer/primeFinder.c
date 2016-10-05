@@ -4,9 +4,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <unistd.h>
 
 unsigned int primeCounter = 0;
 unsigned long long *primes;
+FILE *writeStream;
+
+typedef struct ThreadArgs {
+	int fileDesc;
+	unsigned long long counter;
+} ThreadArgs;
 
 void addToArray(unsigned long long prime) {
 	unsigned long long tempArray[primeCounter-1];
@@ -21,7 +28,14 @@ void addToArray(unsigned long long prime) {
 	primes[primeCounter-1] = prime;
 }
 
-void findPrimes(unsigned long long counter) {
+void writeToPipe(int fileDesc, unsigned long long prime) {
+	// FILE *writeStream = fdopen(fileDesc, "w");
+	fprintf(writeStream, "%llu\n", prime);
+	fflush(writeStream);
+	// close(fileDesc);
+}
+
+void findPrimes(unsigned long long counter, int fileDesc) {
 	for(int i = 2; i <= sqrt(counter); i++) {
 		if(counter % i == 0) {
 			return;		
@@ -29,25 +43,32 @@ void findPrimes(unsigned long long counter) {
 	}
 	primeCounter++;
 	addToArray(counter);
-	printf("Prime found: %llu\n", counter);
+	writeToPipe(fileDesc, counter);
+	// printf("Prime found: %llu\n", counter);
 }
 
 void* workFunction(void *args) {
-	unsigned long long counter = 5000000000;
+	ThreadArgs *arguments = (ThreadArgs*) args;
+	unsigned long long counter = arguments->counter;
+	int fileDesc = arguments->fileDesc;
 	while(counter < 5000005000) {
-		findPrimes(counter);
+		findPrimes(counter, fileDesc);
 		counter++;
 	}
 	return NULL;
 }
 
-void PrimeFinder_launchThread(/*int pipeFileDesc*/) {
+void PrimeFinder_launchThread(int pipeFileDesc) {
 	pthread_t tid;
-	primes = malloc(sizeof(*primes) * 1);
-	pthread_create(&tid, NULL, &workFunction, NULL);
+	primes = malloc(sizeof(*primes));
+	ThreadArgs args = {pipeFileDesc, 5000000000};
+	writeStream = fdopen(pipeFileDesc, "w");
+	printf("fds: %d\n", pipeFileDesc);
+
+	pthread_create(&tid, NULL, &workFunction, (void*) &args);
 
 	pthread_join(tid, NULL);
-
+	close(pipeFileDesc);
 	for(int i = 0; i < primeCounter; i++) {
 		printf("prime: %llu\n", primes[i]);
 	}

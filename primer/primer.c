@@ -1,23 +1,25 @@
 #include <stdio.h>
 #include <math.h>
+#include <unistd.h>
 #include "primeFinder.h"
 
-int primeCount;
+void readFromPipe(int readFileDesc) {
+	FILE *readStream = fdopen(readFileDesc, "r");
+
+	char buffer[1024];
+	while(!feof(readStream) && !ferror(readStream) && fgets(buffer, sizeof(buffer), readStream) != NULL) {
+		printf("Prime Found: %s\n", buffer);
+	}
+}
 
 int main() {
 
-	// unsigned long long start = 5000000000;
+	int fds[2];
+	pipe(fds);
 
-	primeCount = 0;
+	PrimeFinder_launchThread(fds[1]);
 
-	PrimeFinder_launchThread();
-
-	// int *primeArray;
-
-	// while(1) {
-	// 	findPrimes(start);
-	// 	start++;
-	// }
+	readFromPipe(fds[0]);
 
 	return 0;
 }
