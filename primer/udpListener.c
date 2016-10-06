@@ -8,17 +8,17 @@
 #define PORT 12345
 
 
-void printHelp() {
-	printf("Accepted Commands:\n");
-	printf("count 		-- show # of primes found\n");
-	printf("get <int>	-- display prime # <int>\n");
-	printf("first <int>	-- display first <int> primes found\n");
-	printf("last <int>	-- display last <int> primes found\n");
-	printf("stop 		-- stop calculating primes\n");
+void printHelp(char *help) {
+	strcat(help, "Accepted Commands:\n");
+	strcat(help, "count 		-- show # of primes found\n");
+	strcat(help, "get <int>	-- display prime # <int>\n");
+	strcat(help, "first <int>	-- display first <int> primes found\n");
+	strcat(help, "last <int>	-- display last <int> primes found\n");
+	strcat(help, "stop 		-- stop calculating primes\n");
 }
 
-void primeCount() {
-
+unsigned int primeCount() {
+	return PrimeFinder_getNumPrimesFound();
 }
 
 unsigned long long getPrime(int index) {
@@ -54,15 +54,49 @@ void* udpListener_launchThread(void *args) {
 		unsigned int sin_len = sizeof(sin);
 		int bytesRecv = recvfrom(socketDesc, message, 1024, 0, (struct sockaddr*) &sin, &sin_len);
 
-		message[bytesRecv] = 0;
+		message[bytesRecv-1] = 0;
 
-		if(strcmp(message, "help\0\0") == 0) {
-			printHelp();
-		} else {
-			printf("Invalid command!\n");
+		char *tokens[1024];
+		char *token = strtok(message, " ");
+		int counter = 0;
+		while(token) {
+			tokens[counter] = token;
+			token = strtok(NULL, " ");
+			counter++;
 		}
-		printf("bytes: %d\n", bytesRecv);
-		printf("message: %s\n", message);
+
+		char reply[1024];
+		if(strcmp(message, "help") == 0) {
+			printHelp(reply);
+		} else if(strcmp(message, "stop") == 0) {
+			stopCalculating();
+			snprintf(reply, 1024, "Program terminating...\n");
+		} else if(strcmp(message, "count") == 0) {
+			unsigned int count = primeCount();
+			snprintf(reply, 1024, "%u", count);
+		} else if(strcmp(tokens[0], "get") == 0) {
+			char *index = tokens[1];
+			unsigned int idx = atoi(index);
+			unsigned long long prime = getPrime(idx);
+			if(prime != 0) {
+				snprintf(reply, 1024, "%llu\n", prime);
+			} else {
+				snprintf(reply, 1024, "Invalid argument. Must be between 1 and %u\n", primeCount());
+			}
+			
+		// } else if() {
+		// 	lastPrimes();
+		// } else if() {
+		// 	firstPrimes();
+		// }
+		} else {
+			printf("%s is an invalid command!\n", message);
+		}
+
+		sprintf(message, "%s\n", reply);
+
+		sin_len = sizeof(sin);
+		sendto(socketDesc, message, strlen(message), 0, (struct sockaddr *) &sin, sin_len);
 	}
 
 	close(socketDesc);

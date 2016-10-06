@@ -10,6 +10,7 @@ unsigned int primeCounter = 0;
 unsigned long long *primes;
 _Bool isCalculating;
 FILE *writeStream;
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void addToArray(unsigned long long prime) {
 	unsigned long long tempArray[primeCounter-1];
@@ -46,9 +47,10 @@ void* PrimeFinder_launchThread(void* args) {
 	ThreadArgs *arguments = (ThreadArgs*) args;
 	unsigned long long counter = arguments->counter;
 	int fileDesc = arguments->fileDesc;
-
+	isCalculating = true;
 	writeStream = fdopen(fileDesc, "w");
 	
+	// while(isCalculating) {
     while(counter < 5000005000) {
 		findPrimes(counter);
 		counter++;
@@ -65,10 +67,10 @@ unsigned int PrimeFinder_getNumPrimesFound() {
 }
 
 unsigned long long PrimeFinder_getPrimeByIndex(int index) {
-	if(index < primeCounter) {
-		return primes[index];
+	if(index <= primeCounter && index > 0) {
+		return primes[index - 1];
 	}
-	return -1;
+	return 0;
 }
 
 _Bool PrimeFinder_isCalculating() {
@@ -76,7 +78,11 @@ _Bool PrimeFinder_isCalculating() {
 }
 
 void PrimeFinder_stopCalculating() {
-	isCalculating = false;
+	pthread_mutex_lock(&mutex); 
+	{
+		isCalculating = false;
+	}
+	pthread_mutex_unlock(&mutex);
 }
 
 void PrimeFinder_setDelayBetweenPrimes(int delayInMs) {
