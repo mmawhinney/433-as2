@@ -42,18 +42,20 @@ void findPrimes(unsigned long long counter) {
 }
 
 void* PrimeFinder_launchThread(void* args) {
+	isCalculating = true;
 	primes = malloc(sizeof(*primes));
 
 	ThreadArgs *arguments = (ThreadArgs*) args;
 	unsigned long long counter = arguments->counter;
 	int fileDesc = arguments->fileDesc;
-	isCalculating = true;
+	
 	writeStream = fdopen(fileDesc, "w");
 	
 	// while(isCalculating) {
     while(counter < 5000005000) {
 		findPrimes(counter);
 		counter++;
+		// sleep(1);
 	}
 
 	close(fileDesc);
