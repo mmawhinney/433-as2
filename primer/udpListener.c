@@ -45,7 +45,12 @@ void handleLast(char *reply, char *tokens[]) {
 	char *count = tokens[1];
 	unsigned int counter = atoi(count);
 	char buffer[1024];
-	sprintf(buffer, "Last %d primes =\n", counter);
+	if(counter > 50) {
+		counter = 50;
+		sprintf(buffer, "Only displaying last 50 primes = \n");
+	} else {
+		sprintf(buffer, "Last %d primes =\n", counter);	
+	}
 	strcat(reply, buffer);
 	unsigned int numPrimes = primeCount();
 	
@@ -59,7 +64,12 @@ void handleFirst(char *reply, char *tokens[]) {
 	char *count = tokens[1];
 	unsigned int counter = atoi(count);
 	char buffer[1024];
-	sprintf(buffer, "First %d primes = \n", counter);
+	if(counter > 50) {
+		counter = 50;
+		sprintf(buffer, "Only displaying first 50 primes = \n");
+	} else {
+		sprintf(buffer, "First %d primes = \n", counter);	
+	}
 	strcat(reply, buffer);
 
 	for(int i = 1; i <= counter; i++) {
@@ -82,8 +92,7 @@ void* udpListener_launchThread(void *args) {
 	bind(socketDesc, (struct sockaddr*) &sin, sizeof(sin));
 
 	char *reply;
-	// reply = malloc(sizeof(*reply) * 1024);
-	// memset(reply, 0, 1024);
+	char **tokens;
 
 	while(1) {
 		unsigned int sin_len = sizeof(sin);
@@ -93,7 +102,7 @@ void* udpListener_launchThread(void *args) {
 
 		reply = malloc(sizeof(*reply) * 1024);
 		memset(reply, 0, 1024);
-		char **tokens = malloc(sizeof(char) * 1024);
+		tokens = malloc(sizeof(char) * 1024);
 		char *token = strtok(message, " ");
 		int counter = 0;
 		while(token) {
