@@ -35,7 +35,7 @@ void handleGet(char *reply, char *tokens[]) {
 	unsigned int idx = atoi(index);
 	unsigned long long prime = getPrime(idx);
 	if(prime != 0) {
-		snprintf(reply, 1024, "%llu\n", prime);
+		snprintf(reply, 1024, "Prime %u = %llu\n", idx, prime);
 	} else {
 		snprintf(reply, 1024, "Invalid argument. Must be between 1 and %u\n", primeCount());
 	}
@@ -82,7 +82,7 @@ void* udpListener_launchThread(void *args) {
 	bind(socketDesc, (struct sockaddr*) &sin, sizeof(sin));
 
 	char *reply;
-	reply = malloc(sizeof(*reply) * 1024);
+	// reply = malloc(sizeof(*reply) * 1024);
 	// memset(reply, 0, 1024);
 
 	while(1) {
@@ -91,7 +91,9 @@ void* udpListener_launchThread(void *args) {
 
 		message[bytesRecv-1] = 0;
 
-		char *tokens[1024];
+		reply = malloc(sizeof(*reply) * 1024);
+		memset(reply, 0, 1024);
+		char **tokens = malloc(sizeof(char) * 1024);
 		char *token = strtok(message, " ");
 		int counter = 0;
 		while(token) {
@@ -120,17 +122,19 @@ void* udpListener_launchThread(void *args) {
 		} else {
 			snprintf(reply, 1024, "%s is an invalid command!\n", message);
 		}
-
+		
 		sprintf(message, "%s\n", reply);
-
+		
 		sin_len = sizeof(sin);
 		sendto(socketDesc, message, strlen(message), 0, (struct sockaddr *) &sin, sin_len);
 		
+		free(reply);
+		free(tokens);
+
 		if(!PrimeFinder_isCalculating()) {
 			break;
 		}
 	}
-
 	close(socketDesc);
 
 	return NULL;

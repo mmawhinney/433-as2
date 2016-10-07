@@ -51,8 +51,8 @@ void* PrimeFinder_launchThread(void* args) {
 	
 	writeStream = fdopen(fileDesc, "w");
 	
-	// while(isCalculating) {
-    while(counter < 5000005000) {
+	while(isCalculating) {
+    // while(counter < 5000005000) {
 		findPrimes(counter);
 		counter++;
 		// sleep(1);
