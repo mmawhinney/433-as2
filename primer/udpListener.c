@@ -6,7 +6,7 @@
 #include "primeFinder.h"
 
 #define PORT 12345
-
+#define MAX_BUFFER 1024
 
 void printHelp(char *help) {
 	strcat(help, "Accepted Commands:\n");
@@ -35,16 +35,16 @@ void handleGet(char *reply, char *tokens[]) {
 	unsigned int idx = atoi(index);
 	unsigned long long prime = getPrime(idx);
 	if(prime != 0) {
-		snprintf(reply, 1024, "Prime %u = %llu\n", idx, prime);
+		snprintf(reply, MAX_BUFFER, "Prime %u = %llu\n", idx, prime);
 	} else {
-		snprintf(reply, 1024, "Invalid argument. Must be between 1 and %u\n", primeCount());
+		snprintf(reply, MAX_BUFFER, "Invalid argument. Must be between 1 and %u\n", primeCount());
 	}
 }
 
 void handleLast(char *reply, char *tokens[]) {
 	char *count = tokens[1];
 	unsigned int counter = atoi(count);
-	char buffer[1024];
+	char buffer[MAX_BUFFER];
 	if(counter > 50) {
 		counter = 50;
 		sprintf(buffer, "Only displaying last 50 primes = \n");
@@ -63,7 +63,7 @@ void handleLast(char *reply, char *tokens[]) {
 void handleFirst(char *reply, char *tokens[]) {
 	char *count = tokens[1];
 	unsigned int counter = atoi(count);
-	char buffer[1024];
+	char buffer[MAX_BUFFER];
 	if(counter > 50) {
 		counter = 50;
 		sprintf(buffer, "Only displaying first 50 primes = \n");
@@ -79,7 +79,7 @@ void handleFirst(char *reply, char *tokens[]) {
 }
 
 void* udpListener_launchThread(void *args) {
-	char message[1024];
+	char message[MAX_BUFFER];
 
 	struct sockaddr_in sin;
 	memset(&sin, 0, sizeof(sin));
@@ -96,13 +96,13 @@ void* udpListener_launchThread(void *args) {
 
 	while(1) {
 		unsigned int sin_len = sizeof(sin);
-		int bytesRecv = recvfrom(socketDesc, message, 1024, 0, (struct sockaddr*) &sin, &sin_len);
+		int bytesRecv = recvfrom(socketDesc, message, MAX_BUFFER, 0, (struct sockaddr*) &sin, &sin_len);
 
 		message[bytesRecv-1] = 0;
 
-		reply = malloc(sizeof(*reply) * 1024);
-		memset(reply, 0, 1024);
-		tokens = malloc(sizeof(char) * 1024);
+		reply = malloc(sizeof(*reply) * MAX_BUFFER);
+		memset(reply, 0, MAX_BUFFER);
+		tokens = malloc(sizeof(char) * MAX_BUFFER);
 		char *token = strtok(message, " ");
 		int counter = 0;
 		while(token) {
@@ -113,15 +113,15 @@ void* udpListener_launchThread(void *args) {
 
 		
 		if(counter == 0) {
-			snprintf(reply, 1024, "%s is an invalid command!\n", message);
+			snprintf(reply, MAX_BUFFER, "%s is an invalid command!\n", message);
 		} else if(strcmp(message, "help") == 0) {
 			printHelp(reply);
 		} else if(strcmp(message, "stop") == 0) {
 			stopCalculating();
-			snprintf(reply, 1024, "Program terminating...\n");
+			snprintf(reply, MAX_BUFFER, "Program terminating...\n");
 		} else if(strcmp(message, "count") == 0) {
 			unsigned int count = primeCount();
-			snprintf(reply, 1024, "%u", count);
+			snprintf(reply, MAX_BUFFER, "%u", count);
 		} else if(strcmp(tokens[0], "get") == 0 && counter == 2) {
 			handleGet(reply, tokens);
 		} else if(strcmp(tokens[0], "last") == 0 && counter == 2) {
@@ -129,7 +129,7 @@ void* udpListener_launchThread(void *args) {
 		} else if(strcmp(tokens[0], "first") == 0 && counter == 2) {
 			handleFirst(reply, tokens);
 		} else {
-			snprintf(reply, 1024, "%s is an invalid command!\n", message);
+			snprintf(reply, MAX_BUFFER, "%s is an invalid command!\n", message);
 		}
 		
 		sprintf(message, "%s\n", reply);

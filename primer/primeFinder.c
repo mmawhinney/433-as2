@@ -1,10 +1,12 @@
 #include "primeFinder.h"
+#include "delayCalculator.h"
 #include <stdbool.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
 #include <unistd.h>
+#include <time.h>
 
 unsigned int primeCounter = 0;
 unsigned long long *primes;
@@ -48,14 +50,21 @@ void* PrimeFinder_launchThread(void* args) {
 	ThreadArgs *arguments = (ThreadArgs*) args;
 	unsigned long long counter = arguments->counter;
 	int fileDesc = arguments->fileDesc;
-	
+	int threadDelay = arguments->threadDelay;
+
 	writeStream = fdopen(fileDesc, "w");
+	int *reading = malloc(sizeof(int));
 	
+
 	while(isCalculating) {
     // while(counter < 5000005000) {
 		findPrimes(counter);
 		counter++;
-		// sleep(1);
+		delayCalculator_getReading(reading);
+		threadDelay = delayCalculator_determineDelay(*reading);
+		printf("thread delay: %d\n", threadDelay);
+		struct timespec reqDelay = {0, threadDelay * 1000000};
+    	nanosleep(&reqDelay, (struct timespec *) NULL);
 	}
 
 	close(fileDesc);
