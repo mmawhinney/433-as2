@@ -41,7 +41,14 @@ void handleGet(char *reply, char *tokens[]) {
 	}
 }
 
-void handleLast(char *reply, char *tokens[]) {
+void handleLast(char* reply) {
+	char buffer[MAX_BUFFER];
+	sprintf(buffer, "Last prime = \n");
+	sprintf(buffer, "%llu\n", getPrime(primeCount()));
+	strcat(reply, buffer);
+}
+
+void handleMultipleLast(char *reply, char *tokens[]) {
 	char *count = tokens[1];
 	unsigned int counter = atoi(count);
 	char buffer[MAX_BUFFER];
@@ -55,12 +62,22 @@ void handleLast(char *reply, char *tokens[]) {
 	unsigned int numPrimes = primeCount();
 	
 	for(int i = numPrimes - counter; i < numPrimes; i++) {
-		sprintf(buffer, "%llu\n", getPrime(i));
-		strcat(reply, buffer);
+		unsigned long long prime = getPrime(i);
+		if(prime != 0) {
+			sprintf(buffer, "%llu\n", getPrime(i));
+			strcat(reply, buffer);
+		}
 	}
 }
 
-void handleFirst(char *reply, char *tokens[]) {
+void handleFirst(char *reply) {
+	char buffer[MAX_BUFFER];
+	sprintf(buffer, "First prime = \n");
+	sprintf(buffer, "%llu\n", getPrime(1));
+	strcat(reply, buffer);
+}
+
+void handleMultipleFirst(char *reply, char *tokens[]) {
 	char *count = tokens[1];
 	unsigned int counter = atoi(count);
 	char buffer[MAX_BUFFER];
@@ -73,8 +90,11 @@ void handleFirst(char *reply, char *tokens[]) {
 	strcat(reply, buffer);
 
 	for(int i = 1; i <= counter; i++) {
-		sprintf(buffer, "%llu\n", getPrime(i));
-		strcat(reply, buffer);
+		unsigned long long prime = getPrime(i);
+		if(prime != 0) {
+			sprintf(buffer, "%llu\n", getPrime(i));
+			strcat(reply, buffer);	
+		}
 	}
 }
 
@@ -124,10 +144,18 @@ void* udpListener_launchThread(void *args) {
 			snprintf(reply, MAX_BUFFER, "%u", count);
 		} else if(strcmp(tokens[0], "get") == 0 && counter == 2) {
 			handleGet(reply, tokens);
-		} else if(strcmp(tokens[0], "last") == 0 && counter == 2) {
-			handleLast(reply, tokens);
-		} else if(strcmp(tokens[0], "first") == 0 && counter == 2) {
-			handleFirst(reply, tokens);
+		} else if(strcmp(tokens[0], "last") == 0) {
+			if(counter < 2) {
+				handleLast(reply);
+			} else {
+				handleMultipleLast(reply, tokens);
+			}
+		} else if(strcmp(tokens[0], "first") == 0) {
+			if(counter < 2) {
+				handleFirst(reply);
+			} else {
+				handleMultipleFirst(reply, tokens);
+			}
 		} else {
 			snprintf(reply, MAX_BUFFER, "%s is an invalid command!\n", message);
 		}
