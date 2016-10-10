@@ -10,6 +10,7 @@
 const double READING[] = {0.0, 500.0, 1000.0, 1500.0, 2000.0, 2500.0, 3000.0, 3500.0, 4000.0, 4100.0};
 const double DELAY[] = {0.0, 2.0, 6.0, 12.0, 25.0, 30.0, 50.0, 100.0, 500.0, 1500.0};
 static int primeFindingDelay;
+static int primeCount;
 
 void delayCalculator_getReading(int *a2dReading) {
 	FILE *voltage_file = fopen(VOLTAGE_FILE, "r");
@@ -66,14 +67,21 @@ int delayCalculator_getDelay() {
 	return primeFindingDelay;
 }
 
+int delayCalculator_getNumPrimesInLastSecond() {
+	return primeCount;
+}
+
 void* delayCalculator_launchThread(void* args) {
 	while(1) {
 		int a2dReading = 0;
 		delayCalculator_getReading(&a2dReading);
 		delayCalculator_determineDelay(a2dReading);
 		printf("Delay is: %dms\n", primeFindingDelay);
+		int primeCountBefore = PrimeFinder_getNumPrimesFound();
 		struct timespec sleep = {1, 0};
 		nanosleep(&sleep, (struct timespec *) NULL);
+		int primeCountAfter = PrimeFinder_getNumPrimesFound();
+		primeCount = primeCountAfter - primeCountBefore;
 		if(!PrimeFinder_isCalculating()) {
 			break;
 		}

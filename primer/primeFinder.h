@@ -27,4 +27,5 @@ _Bool PrimeFinder_isCalculating(void);
 // Stop calculating primes and free all memory
 void PrimeFinder_stopCalculating(void);
 
+
 #endif
