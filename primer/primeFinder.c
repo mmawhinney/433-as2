@@ -41,7 +41,10 @@ void writeToPipe(unsigned long long prime) {
 }
 
 void findPrimes(unsigned long long counter) {
-	for(int i = 2; i <= sqrt(counter); i++) {
+	if(counter % 2 == 0) {
+		return;
+	}
+	for(int i = 3; i <= sqrt(counter); i += 2) {
 		if(counter % i == 0) {
 			return;		
 		}
@@ -64,7 +67,6 @@ void* PrimeFinder_launchThread(void* args) {
 	
 
 	while(isCalculating) {
-    // while(counter < 5000005000) {
 		findPrimes(counter);
 		counter++;
 	}

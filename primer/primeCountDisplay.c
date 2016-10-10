@@ -164,7 +164,10 @@ void init() {
 }
 
 void displayCount() {
-	char num[20];
+	if(primeCount > 99) {
+		primeCount = 99;
+	}
+	char num[3];
 	snprintf(num, 3, "%d", primeCount);
 	int rightVal = num[1] - '0';
 	int leftVal = num[0] - '0';
@@ -191,8 +194,6 @@ void displayCount() {
 		segments14Left = hex14[0];
 		segments15Left = hex15[0];
 	}
-	
-	
 }
 
 void* primeCountDisplay_launchThread(void* args) {
