@@ -59,7 +59,6 @@ void* PrimeFinder_launchThread(void* args) {
 	ThreadArgs *arguments = (ThreadArgs*) args;
 	unsigned long long counter = arguments->counter;
 	int fileDesc = arguments->fileDesc;
-	// int threadDelay = arguments->threadDelay;
 
 	writeStream = fdopen(fileDesc, "w");
 	
@@ -68,12 +67,6 @@ void* PrimeFinder_launchThread(void* args) {
     // while(counter < 5000005000) {
 		findPrimes(counter);
 		counter++;
-		// threadDelay = delayCalculator_getDelay();
-		// printf("thread delay: %d\n", threadDelay);
-		// struct timespec reqDelay;
-		// reqDelay.tv_sec = (time_t)(threadDelay/1000);
-		// reqDelay.tv_nsec = (threadDelay % 1000) * 1000000;
-  //   	nanosleep(&reqDelay, (struct timespec *) NULL);
 	}
 
 	close(fileDesc);
@@ -103,8 +96,4 @@ void PrimeFinder_stopCalculating() {
 		isCalculating = false;
 	}
 	pthread_mutex_unlock(&mutex);
-}
-
-void PrimeFinder_setDelayBetweenPrimes(int delayInMs) {
-
 }

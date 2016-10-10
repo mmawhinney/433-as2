@@ -67,13 +67,16 @@ int delayCalculator_getDelay() {
 }
 
 void* delayCalculator_launchThread(void* args) {
-	while(PrimeFinder_isCalculating()) {
+	while(1) {
 		int a2dReading = 0;
 		delayCalculator_getReading(&a2dReading);
 		delayCalculator_determineDelay(a2dReading);
 		printf("Delay is: %dms\n", primeFindingDelay);
 		struct timespec sleep = {1, 0};
 		nanosleep(&sleep, (struct timespec *) NULL);
+		if(!PrimeFinder_isCalculating()) {
+			break;
+		}
 	}
 	return NULL;
 }

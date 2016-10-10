@@ -27,8 +27,4 @@ _Bool PrimeFinder_isCalculating(void);
 // Stop calculating primes and free all memory
 void PrimeFinder_stopCalculating(void);
 
-// Setup delay between primes:
-// (the use of this is described in the A2D assignment section)
-void PrimeFinder_setDelayBetweenPrimes(int delayInMs);
-
 #endif
