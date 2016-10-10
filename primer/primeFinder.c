@@ -14,6 +14,14 @@ _Bool isCalculating;
 FILE *writeStream;
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
+void sleepForDelay() {
+	int delay = delayCalculator_getDelay();
+	struct timespec reqDelay;
+	reqDelay.tv_sec = (time_t)(delay/1000);
+	reqDelay.tv_nsec = (delay % 1000) * 1000000;
+    nanosleep(&reqDelay, (struct timespec *) NULL);
+}
+
 void addToArray(unsigned long long prime) {
 	unsigned long long tempArray[primeCounter-1];
 	for(int i = 0; i < primeCounter-1; i++) {
@@ -41,6 +49,7 @@ void findPrimes(unsigned long long counter) {
 	primeCounter++;
 	addToArray(counter);
 	writeToPipe(counter);
+	sleepForDelay();
 }
 
 void* PrimeFinder_launchThread(void* args) {
@@ -50,21 +59,21 @@ void* PrimeFinder_launchThread(void* args) {
 	ThreadArgs *arguments = (ThreadArgs*) args;
 	unsigned long long counter = arguments->counter;
 	int fileDesc = arguments->fileDesc;
-	int threadDelay = arguments->threadDelay;
+	// int threadDelay = arguments->threadDelay;
 
 	writeStream = fdopen(fileDesc, "w");
-	int *reading = malloc(sizeof(int));
 	
 
 	while(isCalculating) {
     // while(counter < 5000005000) {
 		findPrimes(counter);
 		counter++;
-		delayCalculator_getReading(reading);
-		threadDelay = delayCalculator_determineDelay(*reading);
-		printf("thread delay: %d\n", threadDelay);
-		struct timespec reqDelay = {0, threadDelay * 1000000};
-    	nanosleep(&reqDelay, (struct timespec *) NULL);
+		// threadDelay = delayCalculator_getDelay();
+		// printf("thread delay: %d\n", threadDelay);
+		// struct timespec reqDelay;
+		// reqDelay.tv_sec = (time_t)(threadDelay/1000);
+		// reqDelay.tv_nsec = (threadDelay % 1000) * 1000000;
+  //   	nanosleep(&reqDelay, (struct timespec *) NULL);
 	}
 
 	close(fileDesc);

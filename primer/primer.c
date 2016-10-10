@@ -27,18 +27,21 @@ int main() {
 	pipe(fds);
 
 	delayCalculator_enableCape();
-	int *initDelay = malloc(sizeof(int));
-	delayCalculator_getReading(initDelay);
-	int delay = delayCalculator_determineDelay(*initDelay);
-    ThreadArgs arguments = { fds[1], START_COUNTER, delay };
-	pthread_t tid1, tid2;
+	int initDelay = 0;
+	delayCalculator_getReading(&initDelay);
+	delayCalculator_determineDelay(initDelay);
+	initDelay = delayCalculator_getDelay();
+    ThreadArgs arguments = { fds[1], START_COUNTER, initDelay };
+	pthread_t tid1, tid2, tid3;
 	pthread_create(&tid1, NULL, &PrimeFinder_launchThread, (void*) &arguments);
 	pthread_create(&tid2, NULL, &udpListener_launchThread, NULL);
+	pthread_create(&tid3, NULL, &delayCalculator_launchThread, NULL);
 
 	readFromPipe(fds[0]);
     
     pthread_join(tid1, NULL);
     pthread_join(tid2, NULL);
+    pthread_join(tid3, NULL);
 
 	return 0;
 }

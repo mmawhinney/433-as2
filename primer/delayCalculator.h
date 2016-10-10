@@ -3,6 +3,8 @@
 
 void delayCalculator_enableCape();
 void delayCalculator_getReading(int *reading);
-int delayCalculator_determineDelay(int reading);
+void delayCalculator_determineDelay(int reading);
+int delayCalculator_getDelay();
+void* delayCalculator_launchThread(void* args);
 
 #endif
