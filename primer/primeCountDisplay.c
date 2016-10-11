@@ -9,6 +9,7 @@
 #include "primeFinder.h"
 #include "delayCalculator.h"
 #include "primeCountDisplay.h"
+#include "fileAccessor.h"
 
 #define I2C_DEVICE_ADDRESS 0x20
 #define REG_DIRA 0x00
@@ -68,12 +69,19 @@ void exportPins() {
 		exit(-1);
 	}
 
-	int exportPin44 = fprintf(exportFile, "44");
+	int exportPin44 = fprintf(exportFile, "%d", 44);
 	if(exportPin44 < 0) {
 		printf("Unable to write to file (%s)\n", GPIO_EXPORT);
 		exit(-1);
 	}
-	int exportPin61 = fprintf(exportFile, "61");
+	fclose(exportFile);
+
+	exportFile = fopen(GPIO_EXPORT, "w");
+	if(exportFile == NULL) {
+		printf("Unable to open file (%s) for writing\n", GPIO_EXPORT);
+		exit(-1);
+	}
+	int exportPin61 = fprintf(exportFile, "%d", 61);
 	if(exportPin61 < 0) {
 		printf("Unable to write to file (%s)\n", GPIO_EXPORT);
 		exit(-1);
@@ -88,7 +96,7 @@ void setPinsDirection() {
 		exit(-1);
 	}
 
-	int directionPin44 = fprintf(direction44File, "out");
+	int directionPin44 = fprintf(direction44File, "%s", "out");
 	if(directionPin44 < 0) {
 		printf("Unable to write to file (%s)\n", GPIO_44_DIRECTION);
 		exit(-1);
@@ -101,27 +109,12 @@ void setPinsDirection() {
 		exit(-1);
 	}
 
-	int directionPin61 = fprintf(direction61File, "61");
+	int directionPin61 = fprintf(direction61File, "%s", "out");
 	if(directionPin61 < 0) {
 		printf("Unable to write to file (%s)\n", GPIO_61_DIRECTION);
 		exit(-1);
 	}
 	fclose(direction61File);
-}
-
-void enableI2cBus() {
-	FILE *slots = fopen(SLOTS, "w");
-	if(slots == NULL) {
-		printf("Unable to open file (%s) for writing\n", SLOTS);
-		exit(-1);
-	}
-
-	int value = fprintf(slots, "%s", "BB-I2C1");
-	if(value < 0) {
-		printf("Unable to write to file %s\n", SLOTS);
-		exit(-1);
-	}
-	fclose(slots);
 }
 
 void driveToPin(int pin, int value) {
@@ -158,9 +151,9 @@ void driveToPin(int pin, int value) {
 }
 
 void init() {
+	enableI2cBus();
 	exportPins();
 	setPinsDirection();
-	enableI2cBus();
 }
 
 void displayCount() {
@@ -204,7 +197,6 @@ void* primeCountDisplay_launchThread(void* args) {
 	struct timespec sleep = {0, 5*1000000};
 	
 	while(1) {
-		
 		primeCount = delayCalculator_getNumPrimesInLastSecond();
 		displayCount();
 		driveToPin(GPIO_44_PIN, 0);

@@ -8,11 +8,11 @@
 #include <unistd.h>
 #include <time.h>
 
-unsigned int primeCounter = 0;
-unsigned long long *primes;
-_Bool isCalculating;
-FILE *writeStream;
-pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+static unsigned int primeCounter = 0;
+static unsigned long long *primes;
+static _Bool isCalculating;
+static FILE *writeStream;
+static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void sleepForDelay() {
 	int delay = delayCalculator_getDelay();

@@ -8,7 +8,6 @@
 typedef struct ThreadArgs {
 	int fileDesc;
 	unsigned long long counter;
-	int threadDelay;
 } ThreadArgs;
 
 // Begin computing primes on a separate thread. Given the pipe

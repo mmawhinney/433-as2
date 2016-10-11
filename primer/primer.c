@@ -27,17 +27,13 @@ int main() {
 	int fds[2];
 	pipe(fds);
 
-	delayCalculator_enableCape();
-	// int initDelay = 0;
-	// delayCalculator_getReading(&initDelay);
-	// delayCalculator_determineDelay(initDelay);
-	// initDelay = delayCalculator_getDelay();
-    ThreadArgs arguments = { fds[1], START_COUNTER, 0 };
+    ThreadArgs arguments = { fds[1], START_COUNTER};
 	pthread_t tid1, tid2, tid3, tid4;
 	pthread_create(&tid1, NULL, &PrimeFinder_launchThread, (void*) &arguments);
 	pthread_create(&tid2, NULL, &udpListener_launchThread, NULL);
-	pthread_create(&tid3, NULL, &delayCalculator_launchThread, NULL);
 	pthread_create(&tid4, NULL, &primeCountDisplay_launchThread, NULL);
+	pthread_create(&tid3, NULL, &delayCalculator_launchThread, NULL);
+	
 
 	readFromPipe(fds[0]);
     
