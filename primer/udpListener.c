@@ -60,12 +60,19 @@ void handleMultipleLast(char *reply, char *tokens[]) {
 	}
 	strcat(reply, buffer);
 	unsigned int numPrimes = primeCount();
-	
+	int printCounter = 1;
 	for(int i = numPrimes - counter; i < numPrimes; i++) {
 		unsigned long long prime = getPrime(i);
 		if(prime != 0) {
-			sprintf(buffer, "%llu\n", getPrime(i));
+			if(i == numPrimes - 1) {
+				sprintf(buffer, "%llu\n", getPrime(i));
+			} else if(printCounter % 4 == 0) {
+				sprintf(buffer, "%llu,\n", getPrime(i));
+			} else {
+				sprintf(buffer, "%llu, ", getPrime(i));
+			}
 			strcat(reply, buffer);
+			printCounter++;
 		}
 	}
 }
@@ -92,7 +99,13 @@ void handleMultipleFirst(char *reply, char *tokens[]) {
 	for(int i = 1; i <= counter; i++) {
 		unsigned long long prime = getPrime(i);
 		if(prime != 0) {
-			sprintf(buffer, "%llu\n", getPrime(i));
+			if(i == counter) {
+				sprintf(buffer, "%llu\n", getPrime(i));
+			} else if(i % 4 == 0) {
+				sprintf(buffer, "%llu,\n", getPrime(i));
+			} else {
+				sprintf(buffer, "%llu, ", getPrime(i));
+			}
 			strcat(reply, buffer);	
 		}
 	}
