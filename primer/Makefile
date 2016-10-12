@@ -13,9 +13,10 @@ all: $(program_NAME)
 $(program_NAME): $(program_OBJS)
 	$(CC) $(program_OBJS) -o $(program_NAME) $(LDFLAGS)
 	cp primer ~/cmpt433/public/myApps/primer
+	$(CC) $(CFLAGS) noworky.c -o noworky
+	cp noworky ~/cmpt433/public/myApps/noworky
 
 clean:
 	-rm *.o
 
-noworky:
-	$(CC) $(CFLAGS) noworky.c -o noworky	
+	
