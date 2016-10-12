@@ -1,6 +1,6 @@
-# arm-linux-gnueabihf-gcc
+
 program_NAME := primer
-program_C_SRC := $(wildcard *.c)
+program_C_SRC := delayCalculator.c fileAccessor.c primer.c udpListener.c primeCountDisplay.c primeFinder.c
 program_C_OBJS := ${program_C_SRC:.c=.o}
 program_OBJS := $(program_C_OBJS)
 
@@ -16,3 +16,6 @@ $(program_NAME): $(program_OBJS)
 
 clean:
 	-rm *.o
+
+noworky:
+	$(CC) $(CFLAGS) noworky.c -o noworky	
