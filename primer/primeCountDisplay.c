@@ -17,7 +17,6 @@
 #define REG_OUTA 0x14
 #define REG_OUTB 0x15
 #define I2C_BUS_1 "/dev/i2c-1"
-#define SLOTS "/sys/devices/platform/bone_capemgr/slots"
 #define GPIO_EXPORT "/sys/class/gpio/export"
 #define GPIO_44_VALUE "/sys/class/gpio/gpio44/value"
 #define GPIO_44_DIRECTION "/sys/class/gpio/gpio44/direction"
@@ -151,7 +150,7 @@ void driveToPin(int pin, int value) {
 }
 
 void init() {
-	enableI2cBus();
+	fileAccessor_enableI2cBus();
 	exportPins();
 	setPinsDirection();
 }

@@ -16,19 +16,3 @@ $(program_NAME): $(program_OBJS)
 
 clean:
 	-rm *.o
-# %.o : %.c
-	# $(CC) -c $(CFLAGS) $<
-
-# primer: primer.o
-	# $(CC) -o primer primer.o $(LDFLAGS)
-
-# primer: primer.o
-	# $(CC) $(CFLAGS) -o primer primer.o $(LDLIBS)
-
-# primer.o: primer.c
-	# $(CC) $(CFLAGS) -c primer.c -o primer.o $(LDLIBS)
-
-
-	
-
-# cp primer ~/cmpt433/public/myApps/primer

@@ -8,7 +8,7 @@
 
 static pthread_mutex_t fileMutex = PTHREAD_MUTEX_INITIALIZER;
 
-void enableI2cBus() {
+void fileAccessor_enableI2cBus() {
 	pthread_mutex_lock(&fileMutex); 
 	{
 		FILE *slots = fopen(SLOTS, "w");
@@ -27,7 +27,7 @@ void enableI2cBus() {
 	pthread_mutex_unlock(&fileMutex);
 }
 
-void delayCalculator_enableCape() {
+void fileAccessor_enableCape() {
 	pthread_mutex_lock(&fileMutex);	
 	{
 		FILE *slotsFile = fopen(SLOTS, "w");
@@ -47,7 +47,7 @@ void delayCalculator_enableCape() {
 	pthread_mutex_unlock(&fileMutex);
 }
 
-void delayCalculator_getReading(int *a2dReading) {
+void fileAccessor_getReading(int *a2dReading) {
 	pthread_mutex_lock(&fileMutex);
 	{
 		int counter = 0;

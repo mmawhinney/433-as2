@@ -1,47 +1,17 @@
 #include "delayCalculator.h"
 #include "primeFinder.h"
+#include "fileAccessor.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
-// #define VOLTAGE_FILE "/sys/bus/iio/devices/iio:device0/in_voltage0_raw"
 #define SLOTS_FILE "/sys/devices/platform/bone_capemgr/slots"
 #define DATA_POINTS 10
+
 const double READING[] = {0.0, 500.0, 1000.0, 1500.0, 2000.0, 2500.0, 3000.0, 3500.0, 4000.0, 4100.0};
 const double DELAY[] = {0.0, 2.0, 6.0, 12.0, 25.0, 30.0, 50.0, 100.0, 500.0, 1500.0};
 static int primeFindingDelay;
 static int primeCount;
-
-// void delayCalculator_getReading(int *a2dReading) {
-// 	FILE *voltage_file = fopen(VOLTAGE_FILE, "r");
-// 	if(voltage_file == NULL) {
-// 		printf("Unable to open voltage_file\n");
-// 		exit(-1);
-// 	}
-
-// 	int reading = fscanf(voltage_file, "%d", a2dReading);
-// 	if(reading < 0) {
-// 		printf("Unable to read from voltage file\n");
-// 		exit(-1);
-// 	}
-
-// 	fclose(voltage_file);
-// }
-
-// void delayCalculator_enableCape() {
-// 	FILE *slotsFile = fopen(SLOTS_FILE, "w");
-// 	if(slotsFile == NULL) {
-// 		printf("Unable to open slots file\n");
-// 		exit(-1);
-// 	}
-
-// 	int enableSlot = fprintf(slotsFile, "%s", "BB-ADC");
-// 	if(enableSlot < 0) {
-// 		printf("ERROR: unable to write to file (%s)\n", SLOTS_FILE);
-// 		exit(-1);
-// 	}
-// 	fclose(slotsFile);
-// }
 
 void delayCalculator_determineDelay(int reading) {
 	int lowerReading = 0;
@@ -73,10 +43,10 @@ int delayCalculator_getNumPrimesInLastSecond() {
 }
 
 void* delayCalculator_launchThread(void* args) {
-	delayCalculator_enableCape();
+	fileAccessor_enableCape();
 	while(1) {
 		int a2dReading = 0;
-		delayCalculator_getReading(&a2dReading);
+		fileAccessor_getReading(&a2dReading);
 		delayCalculator_determineDelay(a2dReading);
 		printf("Delay is: %dms\n", primeFindingDelay);
 		int primeCountBefore = PrimeFinder_getNumPrimesFound();
